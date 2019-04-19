@@ -166,6 +166,21 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
+offb/CMakeFiles/showNode.dir/rule:
+	cd /home/uav/uavTest/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 offb/CMakeFiles/showNode.dir/rule
+.PHONY : offb/CMakeFiles/showNode.dir/rule
+
+# Convenience name for target.
+showNode: offb/CMakeFiles/showNode.dir/rule
+
+.PHONY : showNode
+
+# fast build rule for target.
+showNode/fast:
+	cd /home/uav/uavTest/catkin_ws/build && $(MAKE) -f offb/CMakeFiles/showNode.dir/build.make offb/CMakeFiles/showNode.dir/build
+.PHONY : showNode/fast
+
+# Convenience name for target.
 offb/CMakeFiles/tf2_msgs_generate_messages_nodejs.dir/rule:
 	cd /home/uav/uavTest/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 offb/CMakeFiles/tf2_msgs_generate_messages_nodejs.dir/rule
 .PHONY : offb/CMakeFiles/tf2_msgs_generate_messages_nodejs.dir/rule
@@ -1224,6 +1239,33 @@ src/offb_node.cpp.s:
 	cd /home/uav/uavTest/catkin_ws/build && $(MAKE) -f offb/CMakeFiles/offb_node.dir/build.make offb/CMakeFiles/offb_node.dir/src/offb_node.cpp.s
 .PHONY : src/offb_node.cpp.s
 
+src/showNode.o: src/showNode.cpp.o
+
+.PHONY : src/showNode.o
+
+# target to build an object file
+src/showNode.cpp.o:
+	cd /home/uav/uavTest/catkin_ws/build && $(MAKE) -f offb/CMakeFiles/showNode.dir/build.make offb/CMakeFiles/showNode.dir/src/showNode.cpp.o
+.PHONY : src/showNode.cpp.o
+
+src/showNode.i: src/showNode.cpp.i
+
+.PHONY : src/showNode.i
+
+# target to preprocess a source file
+src/showNode.cpp.i:
+	cd /home/uav/uavTest/catkin_ws/build && $(MAKE) -f offb/CMakeFiles/showNode.dir/build.make offb/CMakeFiles/showNode.dir/src/showNode.cpp.i
+.PHONY : src/showNode.cpp.i
+
+src/showNode.s: src/showNode.cpp.s
+
+.PHONY : src/showNode.s
+
+# target to generate assembly for a file
+src/showNode.cpp.s:
+	cd /home/uav/uavTest/catkin_ws/build && $(MAKE) -f offb/CMakeFiles/showNode.dir/build.make offb/CMakeFiles/showNode.dir/src/showNode.cpp.s
+.PHONY : src/showNode.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -1233,6 +1275,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... install/local"
+	@echo "... showNode"
 	@echo "... tf2_msgs_generate_messages_nodejs"
 	@echo "... tf2_msgs_generate_messages_lisp"
 	@echo "... tf2_msgs_generate_messages_eus"
@@ -1310,6 +1353,9 @@ help:
 	@echo "... src/offb_node.o"
 	@echo "... src/offb_node.i"
 	@echo "... src/offb_node.s"
+	@echo "... src/showNode.o"
+	@echo "... src/showNode.i"
+	@echo "... src/showNode.s"
 .PHONY : help
 
 

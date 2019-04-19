@@ -2,4 +2,4 @@
 source_root_dir = "/home/uav/uavTest/catkin_ws/src"
 whitelisted_packages = "".split(';') if "" != "" else []
 blacklisted_packages = "".split(';') if "" != "" else []
-underlay_workspaces = "/home/uav/uavTest/catkin_ws/devel;/home/uav/catkin_ws/devel;/opt/ros/kinetic".split(';') if "/home/uav/uavTest/catkin_ws/devel;/home/uav/catkin_ws/devel;/opt/ros/kinetic" != "" else []
+underlay_workspaces = "/home/uav/catkin_ws/devel;/opt/ros/kinetic".split(';') if "/home/uav/catkin_ws/devel;/opt/ros/kinetic" != "" else []

@@ -51,15 +51,15 @@ public:
         Flyer* pThis = ((FlyerBag*)args)->pThis;
 
         ros::Subscriber state_sub = pThis->nh.subscribe<mavros_msgs::State>
-            ("/" + pThis->uav_name + "/mavros/state", 10, &Flyer::state_cb,pThis);
+            (pThis->uav_name + "/mavros/state", 10, &Flyer::state_cb,pThis);
         ros::Publisher set_pos_pub = pThis->nh.advertise<geometry_msgs::PoseStamped>
-            ("/" + pThis->uav_name + "/mavros/setpoint_position/local", 10);
+            (pThis->uav_name + "/mavros/setpoint_position/local", 10);
         ros::Subscriber local_pos_sub = pThis->nh.subscribe<geometry_msgs::PoseStamped>
-            ("/" + pThis->uav_name + "/mavros/local_position/pose",10,&Flyer::local_pos_cb,pThis);
+            (pThis->uav_name + "/mavros/local_position/pose",10,&Flyer::local_pos_cb,pThis);
         ros::ServiceClient arming_client = pThis->nh.serviceClient<mavros_msgs::CommandBool>
-            ("/" + pThis->uav_name + "/mavros/cmd/arming");
+            (pThis->uav_name + "/mavros/cmd/arming");
         ros::ServiceClient set_mode_client = pThis->nh.serviceClient<mavros_msgs::SetMode>
-            ("/" + pThis->uav_name + "/mavros/set_mode");
+            (pThis->uav_name + "/mavros/set_mode");
 
         //the setpoint publishing rate MUST be faster than 2Hz
         ros::Rate rate(20.0);
@@ -149,15 +149,18 @@ int main(int argc, char **argv){
     ros::init(argc, argv, "flyerRandom_node");
     ros::NodeHandle nh;
 
-    int num_uav = 3;
+    // int num_uav = 3;
 
-    for(int i = 1;i<=num_uav;i++){
-        stringstream ss;
-        ss << i;
-        string uav_name = "uav" + ss.str();
-        Flyer *fi = new Flyer(uav_name);
-        fi->excute(nh);
-    }    
+    // for(int i = 1;i<=num_uav;i++){
+    //     stringstream ss;
+    //     ss << i;
+    //     string uav_name = "/uav" + ss.str();
+    //     Flyer *fi = new Flyer(uav_name);
+    //     fi->excute(nh);
+    // }    
+
+    Flyer *fi = new Flyer("");
+    fi->excute(nh);
 
     pthread_exit(NULL);
     return 0;

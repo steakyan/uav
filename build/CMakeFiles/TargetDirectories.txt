@@ -31,6 +31,7 @@
 /home/uav/uavTest/catkin_ws/build/offb/CMakeFiles/rebuild_cache.dir
 /home/uav/uavTest/catkin_ws/build/offb/CMakeFiles/edit_cache.dir
 /home/uav/uavTest/catkin_ws/build/offb/CMakeFiles/install/local.dir
+/home/uav/uavTest/catkin_ws/build/offb/CMakeFiles/showNode.dir
 /home/uav/uavTest/catkin_ws/build/offb/CMakeFiles/tf2_msgs_generate_messages_nodejs.dir
 /home/uav/uavTest/catkin_ws/build/offb/CMakeFiles/tf2_msgs_generate_messages_lisp.dir
 /home/uav/uavTest/catkin_ws/build/offb/CMakeFiles/tf2_msgs_generate_messages_eus.dir

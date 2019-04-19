@@ -390,12 +390,14 @@ clean: gtest/gtest/CMakeFiles/gtest_main.dir/clean
 # Directory level rules for directory offb
 
 # Convenience name for "all" pass in the directory.
+offb/all: offb/CMakeFiles/showNode.dir/all
 offb/all: offb/CMakeFiles/offb_node.dir/all
 offb/all: offb/CMakeFiles/flyerRandom_node.dir/all
 
 .PHONY : offb/all
 
 # Convenience name for "clean" pass in the directory.
+offb/clean: offb/CMakeFiles/showNode.dir/clean
 offb/clean: offb/CMakeFiles/tf2_msgs_generate_messages_nodejs.dir/clean
 offb/clean: offb/CMakeFiles/tf2_msgs_generate_messages_lisp.dir/clean
 offb/clean: offb/CMakeFiles/tf2_msgs_generate_messages_eus.dir/clean
@@ -470,6 +472,43 @@ offb/clean: offb/CMakeFiles/sensor_msgs_generate_messages_py.dir/clean
 offb/preinstall:
 
 .PHONY : offb/preinstall
+
+#=============================================================================
+# Target rules for target offb/CMakeFiles/showNode.dir
+
+# All Build rule for target.
+offb/CMakeFiles/showNode.dir/all:
+	$(MAKE) -f offb/CMakeFiles/showNode.dir/build.make offb/CMakeFiles/showNode.dir/depend
+	$(MAKE) -f offb/CMakeFiles/showNode.dir/build.make offb/CMakeFiles/showNode.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/uav/uavTest/catkin_ws/build/CMakeFiles --progress-num=16,17 "Built target showNode"
+.PHONY : offb/CMakeFiles/showNode.dir/all
+
+# Include target in all.
+all: offb/CMakeFiles/showNode.dir/all
+
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+offb/CMakeFiles/showNode.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/uav/uavTest/catkin_ws/build/CMakeFiles 2
+	$(MAKE) -f CMakeFiles/Makefile2 offb/CMakeFiles/showNode.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/uav/uavTest/catkin_ws/build/CMakeFiles 0
+.PHONY : offb/CMakeFiles/showNode.dir/rule
+
+# Convenience name for target.
+showNode: offb/CMakeFiles/showNode.dir/rule
+
+.PHONY : showNode
+
+# clean rule for target.
+offb/CMakeFiles/showNode.dir/clean:
+	$(MAKE) -f offb/CMakeFiles/showNode.dir/build.make offb/CMakeFiles/showNode.dir/clean
+.PHONY : offb/CMakeFiles/showNode.dir/clean
+
+# clean rule for target.
+clean: offb/CMakeFiles/showNode.dir/clean
+
+.PHONY : clean
 
 #=============================================================================
 # Target rules for target offb/CMakeFiles/tf2_msgs_generate_messages_nodejs.dir
