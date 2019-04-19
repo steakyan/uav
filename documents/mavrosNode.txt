@@ -1,5 +1,12 @@
 以下记录为有关mavros节点的相关信息
-参考资料来源https://mavlink.io/en/messages/common.html
+部分参考资料来源
+   https://mavlink.io/en/messages/common.html
+   rosmsg是mavros_msgs的，具体信息可以从这里找
+   （http://wiki.ros.org/mavros 这个也有一些）
+
+   rosmsg是sensor_msg或者其他的，可以直接把消息类型百度找到docs.ros.org提供的具体解释（这个对应的代码应该在/opt/ros/kinetic/的目录下）
+
+
 --------------------------------------------------------------------------------
 Node [/mavros]
 Publications: mavros节点发布的topic信息
@@ -52,50 +59,133 @@ Publications: mavros节点发布的topic信息
    offset from local position to the global origin ("earth")
 
  * /mavros/global_position/gp_origin [geographic_msgs/GeoPointStamped]
-   
+   全局位置信息
+
  * /mavros/global_position/local [nav_msgs/Odometry]
+   自由空间中机器人的位置估计和速度信息
+
  * /mavros/global_position/raw/fix [sensor_msgs/NavSatFix]
  * /mavros/global_position/raw/gps_vel [geometry_msgs/TwistStamped]
+   这两个是GPS的原始数据
+
  * /mavros/global_position/rel_alt [std_msgs/Float64]
+   相对高度(相对什么没看到？)
 
  * /mavros/hil/actuator_controls [mavros_msgs/HilActuatorControls]
+   Sent from autopilot to simulation. Hardware in the loop control outputs (replacement for HIL_CONTROLS)
+   从无人机发送到仿真环境的话题 
+
  * /mavros/hil/controls [mavros_msgs/HilControls]
+   Sent from autopilot to simulation. Hardware in the loop control outputs
+   这个被上面那个代替了
+
  * /mavros/home_position/home [mavros_msgs/HomePosition]
+   This message can be requested by sending the MAV_CMD_GET_HOME_POSITION command. The position the system will return to and land on. The position is set automatically by the system during the takeoff in case it was not explicitly set by the operator before or after. The position the system will return to and land on. The global and local positions encode the position in the respective coordinate frames, while the q parameter encodes the orientation of the surface. Under normal conditions it describes the heading and terrain slope, which can be used by the aircraft to adjust the approach. The approach 3D vector describes the point to which the system should fly in normal flight mode and then perform a landing sequence along the vector.
+
  * /mavros/imu/data [sensor_msgs/Imu]
+   惯性传感器数据，包括三轴的orientation,angular_velocity linear_acceleration
+   Imu data, orientation computed by FCU
+
  * /mavros/imu/data_raw [sensor_msgs/Imu]
+   Raw IMU data without orientation
+
  * /mavros/imu/diff_pressure [sensor_msgs/FluidPressure]
+   压强数据，适用于在空气，水中的数据
+
  * /mavros/imu/mag [sensor_msgs/MagneticField]
+   三轴磁场数据（in Tesla)和方差
+
  * /mavros/imu/static_pressure [sensor_msgs/FluidPressure]
+   static压强数据（和pressure好像是同一个，流体力学没学过。。）
+
  * /mavros/imu/temperature_baro [sensor_msgs/Temperature]
  * /mavros/imu/temperature_imu [sensor_msgs/Temperature]
+   温度数据 根据气压或imu分别做了不同的calibration
+
  * /mavros/local_position/accel [geometry_msgs/AccelWithCovarianceStamped]
+   This expresses acceleration in free space with uncertainty.
+   和本地位置相关的加速度信息
+
  * /mavros/local_position/odom [nav_msgs/Odometry]
+   自由空间中机器人的位姿估计和速度信息
+
  * /mavros/local_position/pose [geometry_msgs/PoseStamped]
  * /mavros/local_position/pose_cov [geometry_msgs/PoseWithCovarianceStamped]
+   位置信息from fcu（是否带covariance矩阵）
+   
  * /mavros/local_position/velocity_body [geometry_msgs/TwistStamped]
- * /mavros/local_position/velocity_body_cov [geometry_msgs/TwistWithCovarianceStamped]
+ * /mavros/local_position/velocity_body_cov [geometry_msgs/TwistWithCovarianceStamped]   
  * /mavros/local_position/velocity_local [geometry_msgs/TwistStamped]
+   三轴速度信息（linear，angular） from fcu（是否带covariance矩阵）
+   body frame :机体坐标系
+   local frame：当地坐标系
+
  * /mavros/log_transfer/raw/log_data [mavros_msgs/LogData]
+   Reply to LOG_REQUEST_DATA
+
  * /mavros/log_transfer/raw/log_entry [mavros_msgs/LogEntry]
+   Reply to LOG_REQUEST_LIST
+
  * /mavros/manual_control/control [mavros_msgs/ManualControl]
+   Publish MANUAL_CONTROL message (user input).
+   RC Rx, interpreted and normalized.
+
  * /mavros/mission/reached [mavros_msgs/WaypointReached]
+   Publishes on reaching a waypoint from MISSION_ITEM_REACHED message.
+
  * /mavros/mission/waypoints [mavros_msgs/WaypointList]
+   Current waypoint table. Updates on changes.
+
  * /mavros/odometry/in [nav_msgs/Odometry]
+   发布odometry信息
+
  * /mavros/param/param_value [mavros_msgs/Param]
+   Emit the value of a onboard parameter. The inclusion of param_count and param_index in the message allows the recipient to keep track of received parameters and allows him to re-request missing parameters after a loss or timeout.
+
  * /mavros/px4flow/ground_distance [sensor_msgs/Range]
+   和地面的距离信息
+
  * /mavros/px4flow/raw/optical_flow_rad [mavros_msgs/OpticalFlowRad]
+   Optical flow from an angular rate flow sensor
+
  * /mavros/px4flow/temperature [sensor_msgs/Temperature]
+   温度
+
  * /mavros/radio_status [mavros_msgs/RadioStatus]
+   Status received from modem 音频数据
+ 
+   rc-遥控 remote control
  * /mavros/rc/in [mavros_msgs/RCIn]
+   Publish RC inputs (in raw milliseconds)
+
  * /mavros/rc/out [mavros_msgs/RCOut]
+   Publish FCU servo outputs
+
  * /mavros/setpoint_raw/target_attitude [mavros_msgs/AttitudeTarget]
+   Attitude target loopback.返回设定的高度
+
  * /mavros/setpoint_raw/target_global [mavros_msgs/GlobalPositionTarget]
  * /mavros/setpoint_raw/target_local [mavros_msgs/PositionTarget]
+   返回设定的全局/本地位置信息
+
  * /mavros/state [mavros_msgs/State]
+   Source of arming events. 有关无人机当前状态的一些数据
+   current autopilot state
+   包括connected，armed，guided，mode，system_status
+
  * /mavros/statustext/recv [mavros_msgs/StatusText]
+   Status text message. These messages are printed in yellow in the COMM console of QGroundControl. WARNING: They consume quite some bandwidth, so use only for important status and error messages. If implemented wisely, these messages are buffered on the MCU and sent only at a limited rate (e.g. 10 Hz).
+
  * /mavros/target_actuator_control [mavros_msgs/ActuatorControl]
+   输出有关无人机的执行控制器的目标信息
+
  * /mavros/time_reference [sensor_msgs/TimeReference]
+   TimeReference：Measurement from an external time source not actively synchronized with the system clock.
+   根据系统时间进行时间计算
+ 
  * /mavros/timesync_status [mavros_msgs/TimesyncStatus]
+   时间同步信息
+   
  * /mavros/trajectory/desired [mavros_msgs/Trajectory]
  * /mavros/vfr_hud [mavros_msgs/VFR_HUD]
  * /mavros/wind_estimation [geometry_msgs/TwistWithCovarianceStamped]
