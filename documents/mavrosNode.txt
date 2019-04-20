@@ -6,7 +6,20 @@
 
    rosmsg是sensor_msg或者其他的，可以直接把消息类型百度找到docs.ros.org提供的具体解释（这个对应的代码应该在/opt/ros/kinetic/的目录下）
 
+  fcu：飞行控制组件 flight control unit
 
+ROS的通信方式主要包括两种：话题（topic）和服务（service），我觉得这两种通信方式的最主要的不同在于同步和异步的区别
+  topic
+    可以看做是一种异步的通信方式，由master节点掌管，发布消息的节点将对应的消息使用advertise发布，需要该消息的节点在需要的时候调用subscribe查询master节点
+    topic支持一对一，多对多的通信方式
+    topic处理连续的数据流
+    callback函数在服务端启动，因为是异步的，当服务端什么时候收到信息什么时候就做事
+    topic中的数据只要准备好了，就可以被callback——回调函数调用。而发送端的topic的发送时机由publisher自己决定
+  service
+    是一种同步的通信方式，使用call方法调用，响应它直到数据被对方接受到。有时候这也可以用来发送指令（传回的消息可以代表动作成功还是失败）
+    用于那些快速停止的程序，如查询一个node 的状态，或是做数学运算，。它不应当被用于那些需要长时间运行的进程中，特别是有异常处理的子进程。
+    绝不应该用于状态的变化。
+  
 --------------------------------------------------------------------------------
 Node [/mavros]
 Publications: mavros节点发布的topic信息
@@ -81,6 +94,7 @@ Publications: mavros节点发布的topic信息
 
  * /mavros/home_position/home [mavros_msgs/HomePosition]
    This message can be requested by sending the MAV_CMD_GET_HOME_POSITION command. The position the system will return to and land on. The position is set automatically by the system during the takeoff in case it was not explicitly set by the operator before or after. The position the system will return to and land on. The global and local positions encode the position in the respective coordinate frames, while the q parameter encodes the orientation of the surface. Under normal conditions it describes the heading and terrain slope, which can be used by the aircraft to adjust the approach. The approach 3D vector describes the point to which the system should fly in normal flight mode and then perform a landing sequence along the vector.
+  返回家的信息（家的位置在起飞的时候决定
 
  * /mavros/imu/data [sensor_msgs/Imu]
    惯性传感器数据，包括三轴的orientation,angular_velocity linear_acceleration
@@ -187,98 +201,286 @@ Publications: mavros节点发布的topic信息
    时间同步信息
    
  * /mavros/trajectory/desired [mavros_msgs/Trajectory]
+  轨迹描述，使用五个点，使用bezier曲线或者waypoint
+
  * /mavros/vfr_hud [mavros_msgs/VFR_HUD]
+  Metrics typically displayed on a HUD for fixed wing aircraft
+  数据包括有airspeed groundspeed heading throttle altitude climb
+
  * /mavros/wind_estimation [geometry_msgs/TwistWithCovarianceStamped]
+  wind estimation from fcu
+  
  * /rosout [rosgraph_msgs/Log]
+  日志信息
+  包含节点名字，信息，消息来源的文件/函数/行等信息
+
+
+  tf:transform 坐标转换，机器人有很多个坐标系，包括map地图坐标系，odom初始坐标系，baselink机器人中心位置坐标等等，具体内容参考：
+  https://blog.csdn.net/qq_16481211/article/details/82223679
  * /tf [tf2_msgs/TFMessage]
  * /tf_static [tf2_msgs/TFMessage]
+
 
 Subscriptions: 
  * /clock [rosgraph_msgs/Clock]
- * /mavlink/to [unknown type]
- * /mavros/actuator_control [unknown type]
+  模拟时间
+
+ * /mavlink/to [mavros_msgs/Mavlink]
+  Mavlink stream to autopilot.
+
+ * /mavros/actuator_control [mavros_msgs/ActuatorControl]
+  Set the vehicle attitude and body angular rates.
+  设置飞机的高度和机体角度等等
+  https://mavlink.io/en/messages/common.html#ACTUATOR_CONTROL_TARGET
+
  * /mavros/adsb/send [unknown type]
- * /mavros/companion_process/status [unknown type]
+  订阅adsb信息
+
+ * /mavros/companion_process/status [mavros_msgs/CompanionProcessStatus]
+  同伴进程信息，比如是否活动，emergency，poweroff
+
  * /mavros/debug_value/send [unknown type]
- * /mavros/fake_gps/mocap/tf [unknown type]
+  订阅来的debug信息
+
+ * /mavros/fake_gps/mocap/tf [mavros_msgs/CompanionProcessStatus]
+  使用mocap（动作捕捉器）数据来模拟gps
+  https://www.ncnynl.com/archives/201709/2103.html
+
  * /mavros/global_position/global [sensor_msgs/NavSatFix]
- * /mavros/global_position/home [unknown type]
- * /mavros/global_position/set_gp_origin [unknown type]
- * /mavros/gps_rtk/send_rtcm [unknown type]
- * /mavros/hil/gps [unknown type]
- * /mavros/hil/imu_ned [unknown type]
- * /mavros/hil/optical_flow [unknown type]
- * /mavros/hil/rc_inputs [unknown type]
- * /mavros/hil/state [unknown type]
- * /mavros/home_position/set [unknown type]
+  读源码应该是通过这个节点设定全局目标位置
+
+ * /mavros/global_position/home [mavros_msgs/HomePosition]
+  home position subscriber to set "map" origin
+
+ * /mavros/global_position/set_gp_origin [geographic_msgs/GeoPointStamped]
+  设定全局零点
+
+ * /mavros/gps_rtk/send_rtcm [mavros_msgs/RTCM]
+  radio technical commission for maritiem Services
+  国际海事无线电技术委员会 rtcm
+  RTK(Real - time kinematic,实时动态)载波相位差分技术
+
+ * /mavros/hil/gps [mavros_msgs/HilGPS]
+  The global position, as returned by the Global Positioning System (GPS). This is NOT the global position estimate of the sytem, but rather a RAW sensor value. See message GLOBAL_POSITION for the global position estimate.
+  原始数据
+
+ * /mavros/hil/imu_ned [mavros_msgs/HilSensor]
+  The IMU readings in SI units in NED body frame
+  从传感器读到的数据
+  包括加速度，gyro，磁场速度，压强，differential pressure，温度等信息
+
+ * /mavros/hil/optical_flow [mavros_msgs/OpticalFlowRad]
+  Optical flow from a flow sensor 
+  optical flow：光流
+  光流（Optical Flow）是一种研究图像对齐的算法，一般包括两大类：稀疏光流和稠密光流。顾名思义，稀疏光流就是研究图像中稀疏点的光流，这些点一般是角点；稠密光流则是研究图像中所有点的偏移量。
+
+ * /mavros/hil/rc_inputs [mavros_msgs/RCIn]
+  Sent from simulation to autopilot. The RAW values of the RC channels received. The standard PPM modulation is as follows: 1000 microseconds: 0%, 2000 microseconds: 100%. Individual receivers/transmitters might violate this specification.
+  Pulse Position Modulation；PPM
+  如果调制信号只使载波脉冲系列中每一个脉冲产生的时间发生改变，而不改变其形状和幅度，且每一个脉冲产生时间的变化量比例于调制信号电压的幅度，与调制信号的频率无关，这种调制称为脉冲位置调制，简称脉位调制。脉冲调制是一种不连续的周期性脉冲载波的振幅、频率、强度等受到调制信号的控制而发生变化以达到传递信息信号的目的。
+
+ * /mavros/hil/state [mavros_msgs/HilStateQuaternion]
+  Sent from simulation to autopilot, avoids in contrast to HIL_STATE singularities. This packet is useful for high throughput applications such as hardware in the loop simulations.
+  数据中包含有三轴速度，三轴加速度，绕三轴旋转速度，经纬度，高度，airspeed
+
+ * /mavros/home_position/set [mavros_msgs/HomePosition]
+  The position the system will return to and land on. The position is set automatically by the system during the takeoff in case it was not explicitly set by the operator before or after. The global and local positions encode the position in the respective coordinate frames, while the q parameter encodes the orientation of the surface. Under normal conditions it describes the heading and terrain slope, which can be used by the aircraft to adjust the approach. The approach 3D vector describes the point to which the system should fly in normal flight mode and then perform a landing sequence along the vector.
+
  * /mavros/local_position/pose [geometry_msgs/PoseStamped]
- * /mavros/manual_control/send [unknown type]
- * /mavros/mocap/pose [unknown type]
- * /mavros/obstacle/send [unknown type]
- * /mavros/odometry/out [unknown type]
- * /mavros/px4flow/raw/send [unknown type]
- * /mavros/rc/override [unknown type]
- * /mavros/setpoint_accel/accel [unknown type]
- * /mavros/setpoint_attitude/cmd_vel [unknown type]
- * /mavros/setpoint_attitude/thrust [unknown type]
- * /mavros/setpoint_position/global [unknown type]
- * /mavros/setpoint_position/local [unknown type]
- * /mavros/setpoint_raw/attitude [unknown type]
- * /mavros/setpoint_raw/global [unknown type]
+  Subscribe for current local ENU pose
+  这个订阅看源码找到是在setpoint_postion中自己订阅的
+
+ * /mavros/manual_control/send [mavros_msgs/ManualControl]
+  This message provides an API for manually controlling the vehicle using standard joystick axes nomenclature, along with a joystick-like input device. Unused axes can be disabled an buttons are also transmit as boolean values of their
+   joystick axes nomenclature：操作杆轴命名法
+
+ * /mavros/mocap/pose [geometry_msgs/PoseStamped]
+  Pose to send.
+
+ * /mavros/obstacle/send [sensor_msgs/LaserScan]
+  Single scan from a planar laser range-finder
+  具体内容见 http://docs.ros.org/api/sensor_msgs/html/msg/LaserScan.html
+  包括扫描的角度，扫描的时间信息，距离信息
+
+ * /mavros/odometry/out [nav_msgs/Odometry]
+  接收odometry信息
+
+ * /mavros/px4flow/raw/send [mavros_msgs/OpticalFlowRad]
+  光流信息
+
+ * /mavros/rc/override [mavros_msgs/OverrideRCIn]
+  The RAW values of the RC channels sent to the MAV to override info received from the RC radio. A value of UINT16_MAX means no change to that channel. A value of 0 means control of that channel should be released back to the RC radio. The standard PPM modulation is as follows: 1000 microseconds: 0%, 2000 microseconds: 100%. Individual receivers/transmitters might violate this specification.
+
+
+ * /mavros/setpoint_accel/accel [geometry_msgs/Vector3Stamped]
+  Acceleration or force setpoint vector.
+
+  setpoint_attitude:Send attitude setpoint using SET_ATTITUDE_TARGET.
+ * /mavros/setpoint_attitude/cmd_vel [geometry_msgs/TwistStamped)]
+  Send angular velocity.
+
+ * /mavros/setpoint_attitude/thrust [mavros_msgs/Thrust]
+  Send throttle value(0~1).
+  throttle：节流杆，节流阀，风向杆
+
+  setpoint_postion:Sent position setpoint using SET_POSITION_TARGET_LOCAL_NED.
+
+ * /mavros/setpoint_position/global [mavros_msgs/GlobalPositionTarget]
+   Global frame setpoint position. Converts LLA to local ENU.
+
+ * /mavros/setpoint_position/local [eometry_msgs/PoseStamped]
+  Local frame setpoint position. Only YAW axis extracted from orientation field.
+
+  local frame指的是 local position (e.g. fused computer vision and accelerometers) 通常是根据无人机设的坐标系
+  global frame是GPS数据
+
+
+  setpoint_raw:Send RAW setpoint messages to FCU and provide loopback topics (PX4).
+ * /mavros/setpoint_raw/attitude [mavros_msgs/AttitudeTarget]
+  Attitude, angular rate and thrust setpoint.
+
+ * /mavros/setpoint_raw/global [mavros_msgs/GlobalPositionTarget]
+  Global position, velocity and acceleration setpoint.
+
  * /mavros/setpoint_raw/local [unknown type]
- * /mavros/setpoint_velocity/cmd_vel [unknown type]
- * /mavros/setpoint_velocity/cmd_vel_unstamped [unknown type]
- * /mavros/statustext/send [unknown type]
- * /mavros/trajectory/generated [unknown type]
- * /mavros/trajectory/path [unknown type]
- * /mavros/vision_pose/pose [unknown type]
- * /mavros/vision_pose/pose_cov [unknown type]
+    Local position, velocity and acceleration setpoint.
+
+  setpoint_velocity:Send velocity setpoint to FCU.
+ * /mavros/setpoint_velocity/cmd_vel [geometry_msgs/TwistStamped]
+ * /mavros/setpoint_velocity/cmd_vel_unstamped [geometry_msgs/Twist]
+  Velocity setpoint.
+
+ * /mavros/statustext/send [mavros_msgs/StatusText]
+  接收statue text
+  
+ * /mavros/trajectory/generated [mavros_msgs/Trajectory]
+  接受轨迹描述，使用五个点，使用bezier曲线或者waypoint
+
+ * /mavros/trajectory/path [nav_msgs/Path]
+  path:An array of poses that represents a Path for a robot to follow
+
+ * /mavros/vision_pose/pose [geometry_msgs/PoseStamped]  
+ * /mavros/vision_pose/pose_cov [geometry_msgs/PoseWithCovarianceStamped]
+   PoseStamped:A Pose with reference coordinate frame and timestamp
+  Sent VISION_POSITION_ESTIMATE to FCU from PoseStamped topic.(with or without covariance)
+
+
  * /mavros/vision_speed/speed_twist_cov [unknown type]
+  Send vision speed estimates to FCU.
+  视觉速度是从观察对象在视野中出现到它被看见所需的曝光时间的倒数。视觉速度随照明条件的改善而提高。
+
  * /tf [tf2_msgs/TFMessage]
  * /tf_static [tf2_msgs/TFMessage]
+  tf信息接收节点
 
 Services: 
- * /mavros/cmd/arming
- * /mavros/cmd/command
- * /mavros/cmd/command_int
- * /mavros/cmd/land
- * /mavros/cmd/set_home
- * /mavros/cmd/takeoff
- * /mavros/cmd/trigger_control
- * /mavros/cmd/trigger_interval
- * /mavros/ftp/checksum
- * /mavros/ftp/close
- * /mavros/ftp/list
- * /mavros/ftp/mkdir
- * /mavros/ftp/open
- * /mavros/ftp/read
- * /mavros/ftp/remove
- * /mavros/ftp/rename
- * /mavros/ftp/reset
- * /mavros/ftp/rmdir
- * /mavros/ftp/truncate
- * /mavros/ftp/write
- * /mavros/get_loggers
- * /mavros/home_position/req_update
- * /mavros/log_transfer/raw/log_request_data
- * /mavros/log_transfer/raw/log_request_end
- * /mavros/log_transfer/raw/log_request_list
- * /mavros/mission/clear
- * /mavros/mission/pull
- * /mavros/mission/push
- * /mavros/mission/set_current
- * /mavros/param/get
- * /mavros/param/pull
- * /mavros/param/push
- * /mavros/param/set
- * /mavros/set_logger_level
- * /mavros/set_message_interval
- * /mavros/set_mode
- * /mavros/set_stream_rate
- * /mavros/setpoint_position/mav_frame
- * /mavros/setpoint_velocity/mav_frame
- * /mavros/vehicle_info_get
 
+  在mavros/mavros_msgs/msg/CommandCode.msg 有具体每个command的详细信息
+ * /mavros/cmd/arming (mavros_msgs/CommandBool)
+  Change Arming status.
+
+ * /mavros/cmd/command(mavros_msgs/CommandLong)
+  Send any COMMAND_LONG to FCU. 
+  
+ * /mavros/cmd/command_int(mavros_msgs/CommandInt)
+  Send any COMMAND_INT to FCU.
+
+ * /mavros/cmd/land (mavros_msgs/CommandTOL)
+  Send land command.
+
+ * /mavros/cmd/set_home (mavros_msgs/CommandHome)
+  Change HOME location.
+
+ * /mavros/cmd/takeoff (mavros_msgs/CommandTOL)
+  Send takeoff command.
+
+ * /mavros/cmd/trigger_control (mavros_msgs/CommandTriggerControl)
+  Send camera trigger control command.
+
+ * /mavros/cmd/trigger_interval (mavros_msgs/CommandTriggerInterval)
+  Mission command to set camera trigger interval for this flight. If triggering is enabled, the camera is triggered each time this interval expires. This command can also be used to set the shutter integration time for the camera.
+
+  File manipulation tool for MAVLink-FTP.
+ * /mavros/ftp/checksum(mavros_msgs/FileChecksum)
+  Request to calculate CRC32 of file on FCU.
+ * /mavros/ftp/close(mavros_msgs/FileClose)
+  Close file (release session).
+ * /mavros/ftp/list(mavros_msgs/FileList)
+  List directory.
+ * /mavros/ftp/mkdir(mavros_msgs/FileMakeDir)
+  Create directory.
+ * /mavros/ftp/open(mavros_msgs/FileOpen)
+  Open file (acquire session).
+ * /mavros/ftp/read(mavros_msgs/FileRead)
+  Read from opened file.
+ * /mavros/ftp/remove(mavros_msgs/FileRemove)
+  Unlink file.
+ * /mavros/ftp/rename(mavros_msgs/FileRename)
+  Rename file/directory.
+ * /mavros/ftp/reset(std_srvs/Empty)
+  Reset FCU server (dangerous). 
+ * /mavros/ftp/rmdir(mavros_msgs/FileRemoveDir)
+  Remove directory.
+ * /mavros/ftp/truncate(mavros_msgs/FileTruncate)
+  Truncate file.
+ * /mavros/ftp/write(mavros_msgs/FileWrite)
+  Write to opened file.
+
+ * /mavros/get_loggers(roscpp/GetLoggers)
+  获得logger信息
+  
+ * /mavros/home_position/req_update (std_srvs/Trigger)
+  看源码这个服务的意思是指请求home的位置
+
+ * /mavros/log_transfer/raw/log_request_data(mavros_msgs/LogRequestData)
+  Request a chunk of a log
+ * /mavros/log_transfer/raw/log_request_end(mavros_msgs/LogRequestEnd)
+  Stop log transfer and resume normal logging
+ * /mavros/log_transfer/raw/log_request_list(mavros_msgs/LogRequestList)
+  Request a list of available logs
+
+
+  Allows to access to FCU mission (waypoints).
+ * /mavros/mission/clear(mavros_msgs/WaypointClear)
+  Clear mission on FCU.
+ * /mavros/mission/pull(mavros_msgs/WaypointPull)
+  Request update waypoint list.
+ * /mavros/mission/push(mavros_msgs/WaypointPush)
+  Send new waypoint table.
+ * /mavros/mission/set_current (mavros_msgs/WaypointSetCurrent)
+  Set current seq. number in list.
+
+
+  Allows to access to FCU parameters and map it to ROS parameters in ~param/.
+ * /mavros/param/get(mavros_msgs/ParamGet)
+  Return FCU parameter value.
+ * /mavros/param/pull(mavros_msgs/ParamPull)
+  Request parameter from device (or internal cache).
+ * /mavros/param/push(mavros_msgs/ParamPush)
+  Request send parameters from ROS to FCU.
+ * /mavros/param/set(mavros_msgs/ParamSet)
+  Set parameter on FCU immidiatly.
+
+
+ * /mavros/set_logger_level(roscpp/SetLoggerLevel)
+
+ * /mavros/set_message_interval(mavros_msgs/MessageInterval)
+  sets message interval
+ * /mavros/set_mode(mavros_msgs/SetMode)
+  设置飞行模式，已有的包括preflight，auto_armed等，具体见http://docs.ros.org/api/mavros_msgs/html/srv/SetMode.html
+  自定义飞行模式见http://wiki.ros.org/mavros/CustomModes
+  （PX4支持的飞行模式在PX4 native flight stack）
+
+ * /mavros/set_stream_rate(mavros_msgs/StreamRate)
+  sets stream rate
+
+ * /mavros/setpoint_position/mav_frame(mavros_msgs/SetMavFrame)
+  设定位置坐标系
+ * /mavros/setpoint_velocity/mav_frame(mavros_msgs/SetMavFrame)
+  设定速度坐标系
+ * /mavros/vehicle_info_get
+  Request the Vehicle Info
+  查询机器信息，主要包括ID类信息，系统状态，版本信息等
 
 contacting node http://uav:41685/ ...
 Pid: 10014
