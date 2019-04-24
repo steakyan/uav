@@ -201,7 +201,7 @@ Publications: mavros节点发布的topic信息
    时间同步信息
    
  * /mavros/trajectory/desired [mavros_msgs/Trajectory]
-  轨迹描述，使用五个点，使用bezier曲线或者waypoint
+  轨迹描述，使用五个点，使用bezier曲线或者waypoint,这个发送的是将要走的点
 
  * /mavros/vfr_hud [mavros_msgs/VFR_HUD]
   Metrics typically displayed on a HUD for fixed wing aircraft
