@@ -10,7 +10,10 @@
 #include <mavros_msgs/SetMode.h>
 #include <mavros_msgs/State.h>
 #include <pthread.h>
-
+#include <cstring>
+#include <stdio.h>
+#include <stdlib.h>
+using namespace std;
 
 class Leader;
 class Follower;
@@ -148,8 +151,21 @@ class Follower{
     geometry_msgs::PoseStamped cur_local_pos;
     geometry_msgs::PoseStamped cur_leader_pos;
     ros::NodeHandle nh;
+    string uav_name;
 
 public:
+    Follower(){
+
+    }
+
+    ~Follower(){
+
+    }
+
+    Follower(string name){
+        this->uav_name = name;
+    }
+
     void state_cb(const mavros_msgs::State::ConstPtr& msg){
         current_state = *msg;
     }
@@ -166,15 +182,15 @@ public:
         Follower* pThis = ((FollowerBag*)args)->pThis;
 
         ros::Subscriber state_sub = pThis->nh.subscribe<mavros_msgs::State>
-            ("/uav2/mavros/state", 10, &Follower::state_cb,pThis);
+            (pThis->uav_name + "/mavros/state", 10, &Follower::state_cb,pThis);
         ros::Publisher set_pos_pub = pThis->nh.advertise<geometry_msgs::PoseStamped>
-            ("/uav2/mavros/setpoint_position/local", 10);
+            (pThis->uav_name + "/mavros/setpoint_position/local", 10);
         ros::Subscriber local_pos_sub = pThis->nh.subscribe<geometry_msgs::PoseStamped>
-            ("/uav2/mavros/local_position/pose",10,&Follower::local_pos_cb,pThis);
+            (pThis->uav_name + "/mavros/local_position/pose",10,&Follower::local_pos_cb,pThis);
         ros::ServiceClient arming_client = pThis->nh.serviceClient<mavros_msgs::CommandBool>
-            ("/uav2/mavros/cmd/arming");
+            (pThis->uav_name + "/mavros/cmd/arming");
         ros::ServiceClient set_mode_client = pThis->nh.serviceClient<mavros_msgs::SetMode>
-            ("/uav2/mavros/set_mode");
+            (pThis->uav_name + "/mavros/set_mode");
         ros::Subscriber leader_pos_sub = pThis->nh.subscribe<geometry_msgs::PoseStamped>
             ("/uav1/mavros/local_position/pose",10,&Follower::leader_pos_cb,pThis);
 
@@ -259,8 +275,11 @@ int main(int argc, char **argv){
     Leader* leader = new Leader();    
     leader->excute(nh);    
 
-    Follower* follow_one = new Follower();
+    Follower* follow_one = new Follower("/uav2/");
     follow_one->excute(nh);
+
+    Follower* follow_two = new Follower("/uav3/");
+    follow_two->excute(nh);
 
     pthread_exit(NULL);
     return 0;

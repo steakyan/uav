@@ -117,6 +117,12 @@ mavros_msgs/State.h
 -
 pthread.h
 -
+cstring
+-
+stdio.h
+-
+stdlib.h
+-
 
 /opt/ros/kinetic/include/geometry_msgs/Point.h
 string
