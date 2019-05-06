@@ -12,6 +12,9 @@
 
 using namespace std;
 
+const int num_uav = 3;
+double home[num_uav][3] = {{0,0,0},{2,0,0},{0,2,0}};
+
 class Flyer;
 
 struct FlyerBag{
@@ -24,6 +27,7 @@ class Flyer{
     geometry_msgs::PoseStamped cur_local_pos;
     ros::NodeHandle nh;
     string uav_name;
+    int uav_num;
 
 public:
     Flyer(){
@@ -34,8 +38,9 @@ public:
 
     }
 
-    Flyer(string name){
+    Flyer(string name,int n){
         this->uav_name = name;
+        this->uav_num = n;
         srand((unsigned)time(NULL));
     }
 
@@ -71,9 +76,9 @@ public:
         }
 
         geometry_msgs::PoseStamped pose;
-        pose.pose.position.x = rand() % BORDER + 1;
-        pose.pose.position.y = rand() % BORDER + 1;
-        pose.pose.position.z = rand() % BORDER + 1;
+        pose.pose.position.x = rand() % BORDER + 1 - home[pThis->uav_num][0];
+        pose.pose.position.y = rand() % BORDER + 1 - home[pThis->uav_num][1];
+        pose.pose.position.z = rand() % BORDER + 1 - home[pThis->uav_num][2];
 
         //send a few setpoints before starting
         for(int i = 17; ros::ok() && i > 0; --i){
@@ -109,15 +114,15 @@ public:
                 }
             }
 
-            if(  abs(pThis->cur_local_pos.pose.position.x - pose.pose.position.x) < 0.2 &&
-                abs(pThis->cur_local_pos.pose.position.y - pose.pose.position.y) < 0.2 && 
-                abs(pThis->cur_local_pos.pose.position.z - pose.pose.position.z) < 0.2 &&
+            if(  abs(pThis->cur_local_pos.pose.position.x - pose.pose.position.x) < 0.3 &&
+                abs(pThis->cur_local_pos.pose.position.y - pose.pose.position.y) < 0.3 && 
+                abs(pThis->cur_local_pos.pose.position.z - pose.pose.position.z) < 0.3 &&
                 ros::Time::now() - pos_last_req > ros::Duration(1.0) ){
                 ROS_INFO("%s change pos", pThis->uav_name.c_str());
                 pos_last_req = ros::Time::now();                
-                pose.pose.position.x = rand() % BORDER + 1;
-                pose.pose.position.y = rand() % BORDER + 1;
-                pose.pose.position.z = rand() % BORDER + 1;
+                pose.pose.position.x = rand() % BORDER + 1 - home[pThis->uav_num][0];
+                pose.pose.position.y = rand() % BORDER + 1 - home[pThis->uav_num][1]; 
+                pose.pose.position.z = rand() % BORDER + 1 - home[pThis->uav_num][2];
             }
             // ROS_INFO("%s %f %f %f ", pThis->uav_name.c_str(),abs(pThis->cur_local_pos.pose.position.x - pose.pose.position.x),
             //     abs(pThis->cur_local_pos.pose.position.y - pose.pose.position.y),abs(pThis->cur_local_pos.pose.position.z - pose.pose.position.z));
@@ -149,13 +154,11 @@ int main(int argc, char **argv){
     ros::init(argc, argv, "flyerRandom_node");
     ros::NodeHandle nh;
 
-    int num_uav = 5;
-
     for(int i = 1;i<=num_uav;i++){
         stringstream ss;
         ss << i;
         string uav_name = "/uav" + ss.str();
-        Flyer *fi = new Flyer(uav_name);
+        Flyer *fi = new Flyer(uav_name,i-1);
         fi->excute(nh);
     }    
 

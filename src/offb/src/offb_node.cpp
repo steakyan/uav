@@ -27,7 +27,7 @@ struct FollowerBag{
 };
 
 class Leader{
-    const static int RADIUS = 10;
+    const static int RADIUS = 5;
     const static int HEIGHT = 2;
     mavros_msgs::State current_state;
     geometry_msgs::PoseStamped cur_local_pos;
@@ -108,9 +108,9 @@ public:
                 }
             }
 
-            if( abs(pThis->cur_local_pos.pose.position.x - pose.pose.position.x) < 0.1 &&
-                abs(pThis->cur_local_pos.pose.position.y - pose.pose.position.y) < 0.1 && 
-                abs(pThis->cur_local_pos.pose.position.z - HEIGHT) < 0.01 &&
+            if( abs(pThis->cur_local_pos.pose.position.x - pose.pose.position.x) < 0.2 &&
+                abs(pThis->cur_local_pos.pose.position.y - pose.pose.position.y) < 0.2 && 
+                abs(pThis->cur_local_pos.pose.position.z - HEIGHT) < 0.2 &&
                 ros::Time::now() - pos_last_req > ros::Duration(5.0) ){
                 //ROS_INFO("\npos_cur : %f %f\npos_before: %f %f",cur_local_pos.pose.position.x,cur_local_pos.pose.position.y,pose.pose.position.x,pose.pose.position.y);
                 pos_last_req = ros::Time::now();
@@ -145,8 +145,6 @@ public:
 };
 
 class Follower{
-    const static int RADIUS = 5;
-    const static int HEIGHT = 5;
     mavros_msgs::State current_state;
     geometry_msgs::PoseStamped cur_local_pos;
     geometry_msgs::PoseStamped cur_leader_pos;

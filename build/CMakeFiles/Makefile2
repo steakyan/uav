@@ -391,6 +391,7 @@ clean: gtest/gtest/CMakeFiles/gtest_main.dir/clean
 
 # Convenience name for "all" pass in the directory.
 offb/all: offb/CMakeFiles/showNode.dir/all
+offb/all: offb/CMakeFiles/myAvoid_node.dir/all
 offb/all: offb/CMakeFiles/offb_node.dir/all
 offb/all: offb/CMakeFiles/flyerRandom_node.dir/all
 
@@ -398,6 +399,7 @@ offb/all: offb/CMakeFiles/flyerRandom_node.dir/all
 
 # Convenience name for "clean" pass in the directory.
 offb/clean: offb/CMakeFiles/showNode.dir/clean
+offb/clean: offb/CMakeFiles/myAvoid_node.dir/clean
 offb/clean: offb/CMakeFiles/tf2_msgs_generate_messages_nodejs.dir/clean
 offb/clean: offb/CMakeFiles/tf2_msgs_generate_messages_lisp.dir/clean
 offb/clean: offb/CMakeFiles/tf2_msgs_generate_messages_eus.dir/clean
@@ -480,7 +482,7 @@ offb/preinstall:
 offb/CMakeFiles/showNode.dir/all:
 	$(MAKE) -f offb/CMakeFiles/showNode.dir/build.make offb/CMakeFiles/showNode.dir/depend
 	$(MAKE) -f offb/CMakeFiles/showNode.dir/build.make offb/CMakeFiles/showNode.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/uav/uavTest/catkin_ws/build/CMakeFiles --progress-num=16,17 "Built target showNode"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/uav/uavTest/catkin_ws/build/CMakeFiles --progress-num=18,19 "Built target showNode"
 .PHONY : offb/CMakeFiles/showNode.dir/all
 
 # Include target in all.
@@ -507,6 +509,43 @@ offb/CMakeFiles/showNode.dir/clean:
 
 # clean rule for target.
 clean: offb/CMakeFiles/showNode.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target offb/CMakeFiles/myAvoid_node.dir
+
+# All Build rule for target.
+offb/CMakeFiles/myAvoid_node.dir/all:
+	$(MAKE) -f offb/CMakeFiles/myAvoid_node.dir/build.make offb/CMakeFiles/myAvoid_node.dir/depend
+	$(MAKE) -f offb/CMakeFiles/myAvoid_node.dir/build.make offb/CMakeFiles/myAvoid_node.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/uav/uavTest/catkin_ws/build/CMakeFiles --progress-num=14,15 "Built target myAvoid_node"
+.PHONY : offb/CMakeFiles/myAvoid_node.dir/all
+
+# Include target in all.
+all: offb/CMakeFiles/myAvoid_node.dir/all
+
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+offb/CMakeFiles/myAvoid_node.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/uav/uavTest/catkin_ws/build/CMakeFiles 2
+	$(MAKE) -f CMakeFiles/Makefile2 offb/CMakeFiles/myAvoid_node.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/uav/uavTest/catkin_ws/build/CMakeFiles 0
+.PHONY : offb/CMakeFiles/myAvoid_node.dir/rule
+
+# Convenience name for target.
+myAvoid_node: offb/CMakeFiles/myAvoid_node.dir/rule
+
+.PHONY : myAvoid_node
+
+# clean rule for target.
+offb/CMakeFiles/myAvoid_node.dir/clean:
+	$(MAKE) -f offb/CMakeFiles/myAvoid_node.dir/build.make offb/CMakeFiles/myAvoid_node.dir/clean
+.PHONY : offb/CMakeFiles/myAvoid_node.dir/clean
+
+# clean rule for target.
+clean: offb/CMakeFiles/myAvoid_node.dir/clean
 
 .PHONY : clean
 
@@ -1157,7 +1196,7 @@ clean: offb/CMakeFiles/mavros_msgs_generate_messages_cpp.dir/clean
 offb/CMakeFiles/offb_node.dir/all:
 	$(MAKE) -f offb/CMakeFiles/offb_node.dir/build.make offb/CMakeFiles/offb_node.dir/depend
 	$(MAKE) -f offb/CMakeFiles/offb_node.dir/build.make offb/CMakeFiles/offb_node.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/uav/uavTest/catkin_ws/build/CMakeFiles --progress-num=14,15 "Built target offb_node"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/uav/uavTest/catkin_ws/build/CMakeFiles --progress-num=16,17 "Built target offb_node"
 .PHONY : offb/CMakeFiles/offb_node.dir/all
 
 # Include target in all.

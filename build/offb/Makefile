@@ -181,6 +181,21 @@ showNode/fast:
 .PHONY : showNode/fast
 
 # Convenience name for target.
+offb/CMakeFiles/myAvoid_node.dir/rule:
+	cd /home/uav/uavTest/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 offb/CMakeFiles/myAvoid_node.dir/rule
+.PHONY : offb/CMakeFiles/myAvoid_node.dir/rule
+
+# Convenience name for target.
+myAvoid_node: offb/CMakeFiles/myAvoid_node.dir/rule
+
+.PHONY : myAvoid_node
+
+# fast build rule for target.
+myAvoid_node/fast:
+	cd /home/uav/uavTest/catkin_ws/build && $(MAKE) -f offb/CMakeFiles/myAvoid_node.dir/build.make offb/CMakeFiles/myAvoid_node.dir/build
+.PHONY : myAvoid_node/fast
+
+# Convenience name for target.
 offb/CMakeFiles/tf2_msgs_generate_messages_nodejs.dir/rule:
 	cd /home/uav/uavTest/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 offb/CMakeFiles/tf2_msgs_generate_messages_nodejs.dir/rule
 .PHONY : offb/CMakeFiles/tf2_msgs_generate_messages_nodejs.dir/rule
@@ -1212,6 +1227,33 @@ src/flyerRandom_node.cpp.s:
 	cd /home/uav/uavTest/catkin_ws/build && $(MAKE) -f offb/CMakeFiles/flyerRandom_node.dir/build.make offb/CMakeFiles/flyerRandom_node.dir/src/flyerRandom_node.cpp.s
 .PHONY : src/flyerRandom_node.cpp.s
 
+src/myAvoid_node.o: src/myAvoid_node.cpp.o
+
+.PHONY : src/myAvoid_node.o
+
+# target to build an object file
+src/myAvoid_node.cpp.o:
+	cd /home/uav/uavTest/catkin_ws/build && $(MAKE) -f offb/CMakeFiles/myAvoid_node.dir/build.make offb/CMakeFiles/myAvoid_node.dir/src/myAvoid_node.cpp.o
+.PHONY : src/myAvoid_node.cpp.o
+
+src/myAvoid_node.i: src/myAvoid_node.cpp.i
+
+.PHONY : src/myAvoid_node.i
+
+# target to preprocess a source file
+src/myAvoid_node.cpp.i:
+	cd /home/uav/uavTest/catkin_ws/build && $(MAKE) -f offb/CMakeFiles/myAvoid_node.dir/build.make offb/CMakeFiles/myAvoid_node.dir/src/myAvoid_node.cpp.i
+.PHONY : src/myAvoid_node.cpp.i
+
+src/myAvoid_node.s: src/myAvoid_node.cpp.s
+
+.PHONY : src/myAvoid_node.s
+
+# target to generate assembly for a file
+src/myAvoid_node.cpp.s:
+	cd /home/uav/uavTest/catkin_ws/build && $(MAKE) -f offb/CMakeFiles/myAvoid_node.dir/build.make offb/CMakeFiles/myAvoid_node.dir/src/myAvoid_node.cpp.s
+.PHONY : src/myAvoid_node.cpp.s
+
 src/offb_node.o: src/offb_node.cpp.o
 
 .PHONY : src/offb_node.o
@@ -1276,6 +1318,7 @@ help:
 	@echo "... edit_cache"
 	@echo "... install/local"
 	@echo "... showNode"
+	@echo "... myAvoid_node"
 	@echo "... tf2_msgs_generate_messages_nodejs"
 	@echo "... tf2_msgs_generate_messages_lisp"
 	@echo "... tf2_msgs_generate_messages_eus"
@@ -1350,6 +1393,9 @@ help:
 	@echo "... src/flyerRandom_node.o"
 	@echo "... src/flyerRandom_node.i"
 	@echo "... src/flyerRandom_node.s"
+	@echo "... src/myAvoid_node.o"
+	@echo "... src/myAvoid_node.i"
+	@echo "... src/myAvoid_node.s"
 	@echo "... src/offb_node.o"
 	@echo "... src/offb_node.i"
 	@echo "... src/offb_node.s"

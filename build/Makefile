@@ -296,6 +296,19 @@ showNode/fast:
 .PHONY : showNode/fast
 
 #=============================================================================
+# Target rules for targets named myAvoid_node
+
+# Build rule for target.
+myAvoid_node: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 myAvoid_node
+.PHONY : myAvoid_node
+
+# fast build rule for target.
+myAvoid_node/fast:
+	$(MAKE) -f offb/CMakeFiles/myAvoid_node.dir/build.make offb/CMakeFiles/myAvoid_node.dir/build
+.PHONY : myAvoid_node/fast
+
+#=============================================================================
 # Target rules for targets named tf2_msgs_generate_messages_nodejs
 
 # Build rule for target.
@@ -1189,6 +1202,7 @@ help:
 	@echo "... gtest"
 	@echo "... gtest_main"
 	@echo "... showNode"
+	@echo "... myAvoid_node"
 	@echo "... tf2_msgs_generate_messages_nodejs"
 	@echo "... tf2_msgs_generate_messages_lisp"
 	@echo "... tf2_msgs_generate_messages_eus"

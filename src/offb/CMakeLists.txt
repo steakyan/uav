@@ -206,5 +206,8 @@ target_link_libraries(offb_node ${catkin_LIBRARIES})
 add_executable(flyerRandom_node src/flyerRandom_node.cpp)
 target_link_libraries(flyerRandom_node ${catkin_LIBRARIES})
 
+add_executable(myAvoid_node src/myAvoid_node.cpp)
+target_link_libraries(myAvoid_node ${catkin_LIBRARIES})
+
 add_executable(showNode src/showNode.cpp)
 target_link_libraries(showNode ${catkin_LIBRARIES})
